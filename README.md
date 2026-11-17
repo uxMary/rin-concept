@@ -1,6 +1,6 @@
-# RIN concept
+# RIN by OSRIN
 
-Clickable design mockup of RIN: log in, sign up (lead form), request sent, the owner dashboard with the Campus map and the profile menu, and the signed-out screen.
+Clickable design mockup of RIN, using the MJ map with the cube-shaped land (17 Nov): log in, sign up (lead form), request sent, the owner dashboard with the Campus map and the profile menu, and the signed-out screen.
 
 This cut is light theme only and Campus map only. The theme switch, dark tones and map style switch are removed.
 
