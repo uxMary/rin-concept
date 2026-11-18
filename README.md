@@ -1,6 +1,6 @@
-# RIN concept
+# RIN by OSRIN
 
-Clickable design mockup of RIN: log in, sign up (lead form), request sent, the owner dashboard with the Campus map and the profile menu, and the signed-out screen.
+Clickable design mockup of RIN, using the MJ map with the cube-shaped land (17 Nov): log in, sign up (lead form), request sent, the owner dashboard with the Campus map and the profile menu, and the signed-out screen.
 
 This cut is light theme only and Campus map only. The theme switch, dark tones and map style switch are removed.
 
@@ -16,3 +16,7 @@ On the map, click a department, then **Open <department> →** to go to its page
 Open `index.html` in a browser. There is no build step and there are no dependencies. Keep the `departments/` folder next to `index.html`.
 
 All data is sample data. Nothing is sent, saved or paid. Screen names are placeholders until they are confirmed.
+
+## Logo animation
+
+`logo-animation/` holds the OSRIN/RIN logo animation files (new-animation). Open `rin-homecoming.html` in a browser to play the animation; `rin-homecoming-preview.mp4` is a video preview and `review-frames/` holds still review sheets.

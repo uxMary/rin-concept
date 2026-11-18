@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RIN concept</title>
+<title>RIN by OSRIN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <style>
@@ -348,7 +348,7 @@ form{display:grid;gap:14px}
 
 <!-- DASHBOARD + PROFILE -->
 <section class="screen" id="s-dash" aria-label="Dashboard with profile menu">
-  <iframe id="dashFrame" class="dashframe" title="RIN dashboard with map" srcdoc="&lt;title&gt;MJ&lt;/title&gt;
+  <iframe id="dashFrame" class="dashframe" title="RIN dashboard with map" srcdoc="&lt;title&gt;RIN by OSRIN&lt;/title&gt;
 &lt;meta name=&quot;claude:viewport-fit-sides&quot; content=&quot;cover&quot;&gt;
 &lt;link rel=&quot;stylesheet&quot; href=&quot;https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap&quot;&gt;
 &lt;style&gt;
@@ -1047,9 +1047,9 @@ const HEXR=292,HEXW=HEXR*.98,SLAB=18,ROUND=.16,HN=96;
 const hexV=(k=1,dy=0)=&gt;{const o=[];for(let i=0;i&lt;HN;i++){const t=i/HN*Math.PI*2,seg=((t%(Math.PI/3))-Math.PI/6),rh=Math.cos(Math.PI/6)/Math.cos(seg),r=rh+(1-rh)*ROUND;o.push([CX+Math.sin(t)*HEXW*k*r,CY-Math.cos(t)*HEXR*k*r+dy])}return o};
 const ptsS=a=&gt;a.map(p=&gt;f1(p[0])+&#x27;,&#x27;+f1(p[1])).join(&#x27; &#x27;);
 /* land: a cube that is also a sphere. The outline sits between a hexagon and a circle; the three faces stay; soft spherical light on top. */
-const SPH=.42;
+const SPH=0; /* 17 Nov: true hexagon like the logo cube */
 const sphV=(k=1,dy=0)=&gt;{const o=[];for(let i=0;i&lt;HN;i++){const t=i/HN*Math.PI*2,seg=((t%(Math.PI/3))-Math.PI/6),rh=Math.cos(Math.PI/6)/Math.cos(seg),r=rh+(1-rh)*SPH;o.push([CX+Math.sin(t)*HEXW*k*r,CY-Math.cos(t)*HEXR*k*r+dy])}return o};
-const CRR=115;
+const CRR=72; /* 17 Nov: rounder cube corners (was 40) */
 function silhouette(cls,dy=0,extra=0){const k=1-CRR/272;return `&lt;g class=&quot;${cls}&quot;&gt;&lt;polygon points=&quot;${ptsS(sphV(k,dy))}&quot; style=&quot;stroke-width:${2*CRR+extra}px&quot;/&gt;&lt;/g&gt;`}
 function hexLand(cls){const R=HEXR;
   return `&lt;defs&gt;&lt;radialGradient id=&quot;sphlight&quot; gradientUnits=&quot;userSpaceOnUse&quot; cx=&quot;${CX-70}&quot; cy=&quot;${CY-110}&quot; r=&quot;${f1(R*1.25)}&quot;&gt;&lt;stop offset=&quot;0&quot; class=&quot;sl0&quot;/&gt;&lt;stop offset=&quot;.55&quot; class=&quot;sl1&quot;/&gt;&lt;stop offset=&quot;1&quot; class=&quot;sl2&quot;/&gt;&lt;/radialGradient&gt;&lt;/defs&gt;

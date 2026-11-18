@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RIN Homecoming</title>
+<style>
+:root{--start:#111111;--bg:#F5F6F2;--ink:#14201B;--muted:#5E6B65;--mark:#29B286;--card:#FFFFFF;--line:#E1E5DF}
+:root[data-theme="dark"]{--start:#F2F2F2;--bg:#0C1411;--ink:#E8EEEA;--muted:#93A39B;--mark:#2FC392;--card:#131E1A;--line:#22302A}
+:root[data-theme="green"]{--start:#111111;--bg:#29B286;--ink:#FFFFFF;--muted:#DDF5EC;--mark:#FFFFFF;--card:#23A077;--line:#4CC39B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;transition:background .3s}
+main{max-width:1040px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:22px;margin:0 0 4px;font-weight:650}
+.sub{color:var(--muted);margin:0 0 20px;max-width:720px}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 16px 18px;display:flex;flex-direction:column;align-items:center}
+.stage svg.big{width:100%;max-width:640px;height:auto;color:var(--mark);overflow:visible}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:18px;width:100%;max-width:640px}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:7px 13px;border-radius:999px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--mark)}
+:root[data-theme="green"] input[type=range]{accent-color:#fff}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;width:62px;text-align:right}
+.beats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:640px;margin-top:16px}
+.beat{border-top:3px solid var(--line);padding-top:6px;font-size:12px;color:var(--muted)}
+.beat b{display:block;color:var(--ink);font-size:12.5px}
+.beat.on{border-color:var(--mark)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.tile .demo{height:120px;display:flex;align-items:center;justify-content:center;color:var(--mark)}
+.tile h3{margin:0;font-size:14px}
+.tile p{margin:0;font-size:13px;color:var(--muted)}
+.notes{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.notes h2{font-size:15px;margin:0 0 8px}
+.notes ul{margin:0;padding-left:18px;color:var(--muted);font-size:13.5px}
+.notes li{margin:4px 0}
+.notes li b{color:var(--ink);font-weight:600}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.beats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Homecoming: a new RIN logo animation</h1>
+  <p class="sub">The current animation (and every earlier reveal) starts at the centre and pushes outward. This one runs the other way. The core lands first, then the six arrows fly <em>in</em> from outside along their own direction, dock clockwise. Everything starts black and turns green as each piece matches into place. Work goes out, results come home to one place.</p>
+
+  <section class="stage">
+    <svg class="big" id="hero" viewBox="-4 -8 128 66" aria-label="RIN logo animation"></svg>
+    <div class="controls">
+      <button id="replay">Replay</button>
+      <button id="slow" aria-pressed="false">Slow ×0.25</button>
+      <button id="loop" aria-pressed="false">Idle relay</button>
+      <button id="theme">Theme: light</button>
+      <input id="scrub" type="range" min="0" max="2700" value="0" step="1" aria-label="Scrub timeline">
+      <span class="time" id="time">0.00 s</span>
+    </div>
+    <div class="beats" id="beats">
+      <div class="beat" data-a="0" data-b="500"><b>1 · Core lands</b>Centre Y turns in, 0–0.5 s</div>
+      <div class="beat" data-a="300" data-b="1300"><b>2 · Arrows home</b>Six dock clockwise, 0.3–1.3 s</div>
+      <div class="beat" data-a="1300" data-b="1700"><b>3 · Colour</b>Black turns green as pieces match, to 1.7 s</div>
+      <div class="beat" data-a="1700" data-b="2550"><b>4 · Name</b>“rin” slides out, 1.7–2.55 s</div>
+      <div class="beat" data-a="2700" data-b="99999"><b>5 · Idle relay</b>Optional, one nudge passes round</div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div class="tile">
+      <div class="demo"><svg id="loader" viewBox="-6 -6 62 62" width="84" height="84" aria-label="Loader"></svg></div>
+      <h3>Loader (relay)</h3>
+      <p>For “RIN is working”. A nudge passes clockwise from arrow to arrow, like a hand-off between departments. The core stays still; it only turns once, during the intro.</p>
+    </div>
+    <div class="tile">
+      <div class="demo"><svg id="intro" viewBox="-6 -6 62 62" width="96" height="96" aria-label="Mark only intro"></svg></div>
+      <h3>Mark-only intro</h3>
+      <p>Beats 1 to 3 only, 1.7 s, black to green. For app launch or the login screen, where the wordmark is already elsewhere.</p>
+    </div>
+    <div class="tile">
+      <div class="demo" style="gap:18px"><svg id="s32" viewBox="0 0 50 50" width="32" height="32"></svg><svg id="s20" viewBox="0 0 50 50" width="20" height="20"></svg></div>
+      <h3>Small sizes stay still</h3>
+      <p>At 32 px and below the mark doesn’t animate. The motion only reads at about 64 px and up.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>How it differs from the current .mov</h2>
+    <ul>
+      <li><b>Direction.</b> The .mov is dot → orbit → gather → burst → settle, so the logo explodes out of a point. Homecoming converges: nothing grows from a dot, and no shape morphs.</li>
+      <li><b>Uses the real pieces.</b> Each of the seven shapes in <code>small.svg</code> moves as itself, along the axis its arrow already points. No stand-in circles.</li>
+      <li><b>Order means something.</b> Arrows dock clockwise from the top, so the build reads as a sequence. The idle relay reuses that order instead of adding new decoration.</li>
+      <li><b>Shorter.</b> 2.55 s to the full lockup (1.7 s mark-only), against about 6 s per loop in the .mov. That suits a splash or a video sting.</li>
+      <li><b>Prototype only.</b> The “rin” letters are cut from Logo.png as a mask, so they can be recoloured. A final export would use the vector wordmark. Reduced-motion settings jump straight to the finished logo.</li>
+    </ul>
+  </div>
+</main>
+
+<script>
+const PATHS = ["M22.2717 0.330647C23.3205 -0.121361 24.3567 -0.100007 25.433 0.333972L31.8412 2.91819C32.7002 3.26468 33.1155 4.24181 32.7692 5.10081C32.4227 5.9598 31.4456 6.37529 30.5865 6.02894L30.5818 6.0272L30.5772 6.02546L26.685 4.58172C26.4819 4.48028 26.2875 4.38542 26.101 4.29779C25.7067 4.11267 25.344 4.44907 25.344 4.79265V11.9808C25.3439 12.907 24.5931 13.6579 23.6669 13.6579C22.7406 13.6579 21.9896 12.907 21.9895 11.9808V4.79265C21.9895 4.58704 21.8858 4.40717 21.7378 4.29985C21.5853 4.18937 21.3614 4.14159 21.1482 4.25139C21.0277 4.31345 20.9298 4.36846 20.8589 4.40911C20.8318 4.42462 20.7869 4.45059 20.7756 4.45709C20.7617 4.46504 20.7559 4.46817 20.7553 4.4685L17.4973 6.01516C16.6477 6.37874 15.6637 5.98669 15.2976 5.13755C14.931 4.28694 15.3232 3.30007 16.1738 2.93339L16.1736 2.93307L22.2706 0.331122L22.2717 0.330647Z", "M7.83214 7.05144C8.56164 6.48082 9.61548 6.60972 10.1863 7.33917C10.757 8.0687 10.6284 9.12267 9.89885 9.69345L9.89489 9.69662L9.89109 9.69979L6.69482 12.3486C6.60286 12.4094 6.51324 12.4692 6.42609 12.528L6.15689 12.7125L6.12474 12.7366C5.80669 12.9913 5.91881 13.449 6.20709 13.6155L12.4321 17.2095C13.2342 17.6727 13.5091 18.6985 13.046 19.5006C12.5829 20.3028 11.5571 20.5776 10.7549 20.1146L4.52977 16.5205C4.35183 16.4178 4.14431 16.4175 3.97727 16.492C3.8052 16.5687 3.65164 16.7389 3.64013 16.9785C3.63363 17.1138 3.63248 17.2261 3.63221 17.3079C3.63211 17.3399 3.63209 17.3903 3.63205 17.404C3.63202 17.4156 3.63194 17.4222 3.63189 17.4252L3.34226 21.0223C3.23229 21.9399 2.40069 22.5959 1.48221 22.4883C0.562274 22.3805 -0.0962308 21.5473 0.0115523 20.6273L0.0112356 20.6275L0.806343 14.0464L0.806501 14.0451C0.939431 12.9109 1.4761 12.0241 2.39006 11.309L7.83214 7.05144Z", "M31.1064 20.1055C31.912 19.6486 32.9355 19.9309 33.3926 20.7363C33.8494 21.542 33.5663 22.5665 32.7607 23.0234L27.3955 26.0664C27.383 26.0735 27.3699 26.0809 27.3574 26.0879C26.3404 26.6565 25.4639 27.6735 25.4639 28.9385V33.0645C25.4637 33.9905 24.7131 34.742 23.7871 34.7422C22.861 34.7421 22.1095 33.9906 22.1094 33.0645V28.6475C22.1092 27.4891 21.339 26.5427 20.4199 25.9971L15.3828 23.0068C14.5867 22.5339 14.3253 21.5044 14.7979 20.708C15.2707 19.9117 16.2993 19.6494 17.0957 20.1221L22.1328 23.1123L22.2373 23.1729C23.3272 23.7715 24.6535 23.7645 25.7402 23.1484L31.1064 20.1055ZM28.0518 23.6309C28.0518 23.6309 24.889 25.333 23.916 25.333C22.6997 25.3328 19.7812 23.9551 19.7812 23.9551C19.7812 23.9551 22.7811 25.739 23.2676 26.5498C23.7524 27.3583 23.9955 31.0664 23.9971 31.0898C23.9971 31.067 23.9988 26.8742 24.5645 26.3066C25.132 25.7391 28.0518 23.6309 28.0518 23.6309Z", "M38.439 8.0915C38.9924 7.3487 40.0431 7.19485 40.786 7.74818V7.74787L46.0879 11.7272L46.0889 11.728C47.0047 12.4102 47.5043 13.3182 47.6666 14.4672L48.6329 21.309C48.7623 22.2261 48.1237 23.0743 47.2065 23.2039C46.2894 23.3334 45.4409 22.6951 45.3113 21.7779L45.3107 21.7729L45.3098 21.7679L44.6139 17.6754C44.6073 17.5654 44.6003 17.458 44.5929 17.3531L44.5677 17.0277L44.5629 16.9878C44.5014 16.585 44.049 16.4532 43.7607 16.6196L37.5356 20.2137C36.7334 20.6767 35.7076 20.402 35.2445 19.5999C34.7814 18.7977 35.0563 17.7718 35.8584 17.3086L42.0834 13.7146C42.2613 13.6118 42.3654 13.4323 42.3844 13.2504C42.404 13.063 42.3334 12.8449 42.1317 12.7152C42.0178 12.6419 41.9211 12.5846 41.8505 12.5435C41.8228 12.5275 41.7792 12.5023 41.7673 12.4954C41.7573 12.4896 41.7515 12.4862 41.749 12.4846L38.7787 10.4353C38.0389 9.8813 37.8866 8.83317 38.439 8.0915Z", "M44.317 30.3616C44.5367 29.4937 45.3964 28.9559 46.2656 29.1272L46.3497 29.1462C47.2481 29.3712 47.7945 30.2818 47.5696 31.1803L45.9367 37.605L45.9364 37.6063C45.659 38.7141 45.013 39.5246 44.0149 40.1165L38.0716 43.6407C37.2749 44.113 36.2461 43.85 35.7737 43.0534C35.3014 42.2567 35.5644 41.2279 36.361 40.7555L36.3653 40.753L36.3696 40.7501L39.8794 38.5333C39.9783 38.4848 40.0748 38.4371 40.1687 38.39L40.4593 38.2417L40.4941 38.2218C40.8423 38.01 40.7898 37.5418 40.5253 37.3398L34.8129 32.9767C34.0768 32.4145 33.9359 31.3619 34.4981 30.6258C35.0428 29.9127 36.0476 29.758 36.7791 30.2601L36.8491 30.3108L42.5615 34.6738C42.7248 34.7986 42.9306 34.8254 43.1059 34.773C43.2864 34.7189 43.4606 34.5699 43.5027 34.3337C43.5265 34.2003 43.5422 34.0891 43.5529 34.0081C43.557 33.9771 43.5634 33.9255 43.5651 33.9126C43.5665 33.9025 43.5675 33.8962 43.568 33.8928L43.5681 33.8917L44.317 30.3616ZM1.81053 27.4787C2.70233 27.2286 3.62814 27.7488 3.87835 28.6406L3.8812 28.6504L5.11479 32.6158C5.15837 32.8381 5.20177 33.0494 5.24623 33.25C5.34059 33.6753 5.82831 33.7568 6.10024 33.5473L11.7932 29.1587C12.5267 28.5932 13.5798 28.7293 14.1454 29.4628C14.7109 30.1964 14.5747 31.2496 13.8412 31.8152L8.14827 36.2037C7.98548 36.3292 7.90621 36.5213 7.91152 36.7041C7.91703 36.8923 8.01611 37.099 8.23314 37.2009C8.35577 37.2584 8.45907 37.3024 8.5345 37.3337C8.56299 37.3456 8.61171 37.3656 8.62333 37.3705C8.64319 37.3787 8.64716 37.3806 8.64345 37.3787L11.8589 39.0152C12.6658 39.4661 12.9558 40.4853 12.5067 41.2937C12.0571 42.103 11.037 42.3948 10.2275 41.946L4.44304 38.7054L4.44194 38.7048C3.44373 38.1502 2.828 37.3168 2.51458 36.1996L0.64867 29.5466C0.39856 28.6548 0.918718 27.729 1.81053 27.4787Z", "M24.2622 38.9473C24.7621 38.9448 25.1994 39.081 25.502 39.2844C25.8064 39.4892 25.9434 39.736 25.9446 39.9639L25.9639 43.761C25.9655 44.0774 26.1253 44.3417 26.3725 44.4861C26.6146 44.6276 26.9161 44.6408 27.1886 44.5216L27.1946 44.5189L27.2005 44.5161L30.4525 42.952C31.3003 42.5841 32.2862 42.9712 32.6567 43.8185C33.0276 44.6672 32.6403 45.6561 31.7916 46.0271L31.7917 46.0273L25.708 48.6602L25.7069 48.6607C24.6605 49.118 23.6242 49.1019 22.5458 48.6734L16.1244 46.1219C15.2637 45.7799 14.8434 44.8048 15.1854 43.9441C15.5274 43.0833 16.5024 42.6627 17.3633 43.0047L17.368 43.0066L17.3726 43.0082L21.2789 44.4347C21.9123 44.7265 22.6119 44.2515 22.6085 43.567L22.5903 39.9809C22.5892 39.753 22.7236 39.5049 23.0259 39.2971C23.3264 39.0906 23.7623 38.9498 24.2622 38.9473Z"];
+const WORD = "data:image/png;base64,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";
+// clockwise from top: [pathIndex, subpathIndex]
+const ORDER = [[0,0],[3,0],[4,0],[5,0],[4,1],[1,0]];
+const CORE = 2;
+const C = {x:25, y:25};
+
+const ease = {
+  outCubic: t => 1 - Math.pow(1 - t, 3),
+  outBack: (t, s = 1.4) => 1 + (s + 1) * Math.pow(t - 1, 3) + s * Math.pow(t - 1, 2),
+  inOut: t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2,
+};
+const clamp = (v, a=0, b=1) => Math.max(a, Math.min(b, v));
+const seg = (t, a, d) => clamp((t - a) / d);
+const bump = p => Math.sin(Math.PI * clamp(p));
+
+const COL = {};
+function readCols(){ const cs = getComputedStyle(document.documentElement); COL.start = hex(cs.getPropertyValue("--start")); COL.mark = hex(cs.getPropertyValue("--mark")); }
+function hex(v){ v = v.trim().replace("#",""); return [0,2,4].map(i => parseInt(v.substr(i,2),16)); }
+function mix(a, b, k){ return "rgb(" + a.map((x,i) => Math.round(x + (b[i]-x)*k)).join(",") + ")"; }
+function subpaths(d){ return d.match(/M[^M]*/g); }
+
+const NS = "http://www.w3.org/2000/svg";
+function el(name, attrs, parent){ const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+
+// Build one logo instance inside an svg; returns handles for animating it
+function buildMark(svg, withWord){
+  const root = el("g", {}, svg);
+  const ring = el("polygon", {fill:"none", stroke:"none", opacity:"0"}, root); // unused (hexagon removed)
+  const pts = [];
+  for (let i = 0; i < 6; i++){ const a = -Math.PI/2 + i*Math.PI/3; pts.push((C.x + 24*Math.cos(a)).toFixed(2) + "," + (C.y + 24*Math.sin(a)).toFixed(2)); }
+  ring.setAttribute("points", pts.join(" "));
+  const mark = el("g", {}, root);
+  const core = el("path", {d: PATHS[CORE], fill:"currentColor"}, mark);
+  const pieces = ORDER.map(([pi, si]) => {
+    const d = subpaths(PATHS[pi])[si];
+    return { node: el("path", {d, fill:"currentColor"}, mark) };
+  });
+  let word = null, wordClip = null;
+  if (withWord){
+    const id = "w" + Math.random().toString(36).slice(2);
+    const defs = el("defs", {}, svg);
+    const m = el("mask", {id: id + "m", maskUnits:"userSpaceOnUse", x:"-20", y:"-20", width:"200", height:"100"}, defs);
+    el("image", {href: WORD, x:"59.7", y:"1.9", width:"50.1", height:"34.6", preserveAspectRatio:"none"}, m);
+    const cp = el("clipPath", {id: id + "c"}, defs);
+    wordClip = el("rect", {x:"57", y:"-10", width:"0", height:"70"}, cp);
+    const wg = el("g", {"clip-path": `url(#${id}c)`}, root);
+    word = el("rect", {x:"-20", y:"-20", width:"200", height:"100", fill:"currentColor", mask:`url(#${id}m)`}, wg);
+    word.parentNode.insertBefore; // keep ref
+    word._g = wg;
+  }
+  // measure directions after in DOM
+  requestAnimationFrame(()=>{});
+  return { svg, root, ring, mark, core, pieces, word, wordClip, measured:false };
+}
+
+function measure(h){
+  const cb = h.core.getBBox();
+  h.coreC = {x: cb.x + cb.width/2, y: cb.y + cb.height/2};
+  h.pieces.forEach(p => {
+    const b = p.node.getBBox();
+    const c = {x: b.x + b.width/2, y: b.y + b.height/2};
+    const dx = c.x - C.x, dy = c.y - C.y, L = Math.hypot(dx, dy);
+    p.c = c; p.u = {x: dx/L, y: dy/L};
+  });
+  const mb = h.mark.getBBox();
+  h.mc = {x: mb.x + mb.width/2, y: mb.y + mb.height/2};
+  const pts = [];
+  for (let i = 0; i < 6; i++){ const a = -Math.PI/2 + i*Math.PI/3; pts.push((h.mc.x + 25.5*Math.cos(a)).toFixed(2) + "," + (h.mc.y + 25.5*Math.sin(a)).toFixed(2)); }
+  h.ring.setAttribute("points", pts.join(" "));
+  h.measured = true;
+}
+
+// Timeline in ms
+const T = { coreA:0, coreD:500, pieceA:300, pieceStep:110, pieceD:560, colA:1250, colD:450, wordA:1700, wordD:850, end:2550 };
+const RELAY = 1800; // relay lap
+
+function relay(h, tt){
+  // tt: ms into idle. Nudge travels clockwise round the arrows.
+  const lap = Math.floor(tt / RELAY), ph = (tt % RELAY);
+  h.pieces.forEach((p, i) => {
+    const k = bump((ph - i*150) / 420);
+    const r = 1.7 * k;
+    p.node.setAttribute("transform", `translate(${(p.u.x*r).toFixed(3)} ${(p.u.y*r).toFixed(3)})`);
+  });
+  // core stays still during the relay; it only turns once, in the intro
+}
+
+function render(h, t, opts = {}){
+  if (!h.measured) measure(h);
+  const withWord = !!h.word;
+  // 1 core lands: one full 360deg turn in, scales up with slight overshoot
+  const pc = seg(t, T.coreA, T.coreD);
+  const cs = 0.35 + 0.65 * ease.outBack(pc, 1.8);
+  const cr = -360 * (1 - ease.outCubic(pc));   // full turn, so it ends exactly where it started
+  h.core.setAttribute("opacity", ease.outCubic(seg(t, 0, 220)).toFixed(3));
+  h.core.setAttribute("transform", `translate(${h.coreC.x} ${h.coreC.y}) rotate(${cr.toFixed(2)}) scale(${cs.toFixed(4)}) translate(${-h.coreC.x} ${-h.coreC.y})`);
+
+  // 2 arrows come home along their own axis, clockwise, settling with no extra bounce
+  h.pieces.forEach((p, i) => {
+    const a = T.pieceA + i * T.pieceStep;
+    const q = seg(t, a, T.pieceD);
+    const dist = 26 * (1 - ease.outBack(q, 1.1));       // negative near end = small inward overshoot
+    const r = dist;
+    const rot = 14 * (1 - ease.outCubic(q));
+    p.node.setAttribute("opacity", ease.outCubic(seg(t, a, T.pieceD * 0.35)).toFixed(3));
+    p.node.setAttribute("transform", `translate(${(p.u.x*r).toFixed(3)} ${(p.u.y*r).toFixed(3)}) rotate(${rot.toFixed(2)} ${p.c.x} ${p.c.y})`);
+  });
+
+  // colour: each arrow starts black and turns green as it docks into place;
+  // the core turns green once the last arrow has matched up
+  h.pieces.forEach((p, i) => {
+    const a = T.pieceA + i * T.pieceStep;
+    p.node.setAttribute("fill", mix(COL.start, COL.mark, ease.inOut(seg(t, a + T.pieceD*0.45, T.pieceD*0.55))));
+  });
+  h.core.setAttribute("fill", mix(COL.start, COL.mark, ease.inOut(seg(t, T.colA, T.colD))));
+
+  // 4 name: mark shifts left, wordmark wipes out from behind it
+  if (withWord){
+    const wp = ease.inOut(seg(t, T.wordA, T.wordD));
+    const shift = 35 * (1 - wp);            // mark starts centred in the lockup
+    h.mark.setAttribute("transform", `translate(${shift.toFixed(3)} 0)`);
+    const wq = ease.outCubic(seg(t, T.wordA + 180, T.wordD - 180));
+    h.wordClip.setAttribute("width", (58 * wq).toFixed(3));
+    h.word.setAttribute("transform", `translate(${(-10 * (1 - wq)).toFixed(3)} 0)`);
+    h.word.setAttribute("opacity", wq.toFixed(3));
+    h.word._g.setAttribute("transform", `translate(${shift.toFixed(3)} 0)`);
+  }
+
+  if (opts.idle && t > T.end + 150) relay(h, t - T.end - 150);
+}
+
+// ---- wiring
+readCols();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const hero = buildMark(document.getElementById("hero"), true);
+const loader = buildMark(document.getElementById("loader"), false);
+const intro = buildMark(document.getElementById("intro"), false);
+["s32","s20"].forEach(id => { const s = document.getElementById(id); s.style.color = "var(--mark)"; PATHS.forEach(d => el("path", {d, fill:"currentColor"}, s)); });
+
+let speed = 1, idle = false, start = performance.now(), scrubbing = false, scrubT = 0;
+const scrub = document.getElementById("scrub"), time = document.getElementById("time");
+const beats = [...document.querySelectorAll(".beat")];
+let tHero = 0, last = performance.now();
+
+function frame(now){
+  const dt = now - last; last = now;
+  if (!scrubbing) tHero += dt * speed;
+  const t = reduce ? 9999 : tHero;
+  render(hero, t, {idle});
+  if (!scrubbing){ scrub.value = Math.min(t, 2700); }
+  time.textContent = (Math.min(t, 99999)/1000).toFixed(2) + " s";
+  beats.forEach(b => b.classList.toggle("on", t >= +b.dataset.a && t < +b.dataset.b));
+  const lt = reduce ? 0 : (now - start);
+  render(loader, T.end + 200 + lt, {idle:true});
+  const it = reduce ? 9999 : ((now - start) % 3600);
+  render(intro, it > 2400 ? 2400 : it, {});
+  intro.root.setAttribute("opacity", it > 3200 ? (1 - (it-3200)/400).toFixed(3) : "1");
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+document.getElementById("replay").onclick = () => { tHero = 0; };
+document.getElementById("slow").onclick = e => { speed = speed === 1 ? 0.25 : 1; e.target.setAttribute("aria-pressed", speed !== 1); };
+document.getElementById("loop").onclick = e => { idle = !idle; e.target.setAttribute("aria-pressed", idle); };
+const themes = ["light","dark","green"]; let ti = 0;
+document.getElementById("theme").onclick = e => { ti = (ti + 1) % 3; document.documentElement.dataset.theme = themes[ti]; e.target.textContent = "Theme: " + themes[ti]; readCols(); };
+scrub.addEventListener("input", () => { scrubbing = true; tHero = +scrub.value; });
+scrub.addEventListener("change", () => { scrubbing = false; });
+window.__seek = t => { tHero = t; scrubbing = true; };
+</script>
+</body>
+</html>
