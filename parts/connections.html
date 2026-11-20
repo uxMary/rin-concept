@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RIN connected tools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap">
+<!--
+  RIN connected tools: a separate part, layered over the Campus map in index.html.
+
+  Each department connects to its own tools (MCPs, or tools without an MCP).
+  One dot per tool. A tool that two departments share (the same Google Drive, for example)
+  is one dot with a line to each. If they used different Drives, list them as two tools.
+  Gatehouse and Governance work inside RIN, so they have no tools.
+
+  Edit CONNECTIONS below. Names are sample data.
+
+  How it connects (window.postMessage):
+  - The page sends {type:'rin-map', center:[x,y], depts:{id:{x,y}, ...}, far:boolean}
+    with each department's position in map units (the map is 1000 x 640).
+  - This file lays the dots around the land, near their departments, and draws the lines.
+  Opened on its own, it uses sample positions.
+-->
+<style>
+:root{--ink:#242824;--muted:#646b64;--faint:#8b918a;--line:#b9beb5;--dot:#ffffff;--font:"DM Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html,body{margin:0;background:transparent;overflow:hidden}
+svg{display:block;overflow:visible}
+.ln{fill:none;stroke:var(--line);stroke-width:1.2;stroke-dasharray:3 4;stroke-linecap:round}
+.tool .cube{fill:var(--dot);stroke:var(--faint);stroke-width:1.4;stroke-linejoin:round}
+.tool .y{fill:none;stroke:var(--faint);stroke-width:1;stroke-linecap:round;opacity:.7}
+.tool text{font:500 11px var(--font);fill:var(--muted);letter-spacing:.1px;paint-order:stroke;stroke:#fafaf9;stroke-width:3px;stroke-linejoin:round}
+.far .tool text{opacity:0}
+.far .ln{opacity:.5}
+</style>
+</head>
+<body>
+<svg id="layer" width="1000" height="640" viewBox="0 0 1000 640" aria-label="Connected tools"></svg>
+<script>
+/* ---- Sample data: which tools each department uses ---- */
+var CONNECTIONS=[
+  {name:'HDFC Bank',       depts:['accounting']},
+  {name:'GST portal',      depts:['accounting']},
+  {name:'Razorpay',        depts:['accounting']},
+  {name:'Shopify',         depts:['market']},
+  {name:'Instamart',       depts:['market']},
+  {name:'Shiprocket',      depts:['market']},
+  {name:'Meta Ads',        depts:['marketing']},
+  {name:'Instagram',       depts:['care']},
+  {name:'Google Drive',    depts:['marketing','library']},
+  {name:'Gmail',           depts:['care']},
+  {name:'WhatsApp',        depts:['care']},
+  {name:'Notion',          depts:['library']},
+  {name:'Zapier',          depts:['workshop']}
+];
+/* Departments that never get tool dots */
+var NO_TOOLS=['gatehouse','governance','hq'];
+
+(function(){
+  var svg=document.getElementById('layer');
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var f=function(n){return n.toFixed(1)};
+  /* 20 Nov (Joseph): connected apps are plain dots */
+  function dot(x,y,r){return '<circle class="cube" cx="'+f(x)+'" cy="'+f(y)+'" r="'+r+'"/>'}
+
+  function draw(m){
+    var C=m.center,D=m.depts,RX=360,RY=292,GAP=0.2;
+    var tools=CONNECTIONS.map(function(t){
+      var ds=t.depts.filter(function(id){return D[id]&&NO_TOOLS.indexOf(id)<0});
+      if(!ds.length)return null;
+      var ax=0,ay=0;ds.forEach(function(id){ax+=D[id].x;ay+=D[id].y});ax/=ds.length;ay/=ds.length;
+      return {name:t.name,ds:ds,a:Math.atan2((ay-C[1])/RY,(ax-C[0])/RX)}}).filter(Boolean);
+    /* spread dots that would sit on top of each other */
+    tools.sort(function(p,q){return p.a-q.a});
+    for(var k=0;k<40;k++){var moved=false;for(var i=0;i<tools.length;i++){var A=tools[i],B=tools[(i+1)%tools.length];
+      var d=B.a-A.a;if(i===tools.length-1)d+=Math.PI*2;if(d<GAP){var s=(GAP-d)/2;A.a-=s;B.a+=s;moved=true}}if(!moved)break}
+    var lines='',dots='';
+    tools.forEach(function(t){
+      var x=C[0]+Math.cos(t.a)*RX,y=C[1]+Math.sin(t.a)*RY;
+      t.ds.forEach(function(id){var dx=D[id].x,dy=D[id].y-(D[id].lift||0),L=Math.hypot(x-dx,y-dy),k=Math.max(0,(L-34)/L);
+        lines+='<path class="ln" d="M'+f(x)+' '+f(y)+'L'+f(x+(dx-x)*k)+' '+f(y+(dy-y)*k)+'"/>'});
+      var below=y>C[1]-40;
+      dots+='<g class="tool"><title>'+esc(t.name)+' · '+t.ds.join(', ')+'</title>'+dot(x,y,5.5)+'<text x="'+f(x)+'" y="'+f(below?y+21:y-13)+'" text-anchor="middle">'+esc(t.name)+'</text></g>';
+    });
+    svg.innerHTML=lines+dots;
+    document.body.classList.toggle('far',!!m.far);
+  }
+  window.addEventListener('message',function(e){var d=e.data;if(d&&d.type==='rin-map')draw(d)});
+  if(window.parent===window){
+    draw({center:[500,318],depts:{accounting:{x:390,y:180},market:{x:610,y:180},marketing:{x:330,y:430},care:{x:670,y:430},library:{x:420,y:300},workshop:{x:580,y:300},gatehouse:{x:500,y:110},governance:{x:500,y:410}}});
+  }else{try{parent.postMessage({type:'rin-connections-ready'},'*')}catch(e){}}
+})();
+</script>
+</body>
+</html>

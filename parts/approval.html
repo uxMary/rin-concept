@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RIN approval card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap">
+<!--
+  RIN approval card: a separate part, embedded in the RIN chat panel (index.html dashboard).
+
+  How it connects (window.postMessage, both directions):
+  - The page sends:   {type:'rin-approval', approval:{dept, deptName, q (may hold <b>), facts:[[label,value],...], why, opts:[label,...]}}
+                      {type:'rin-approval', approval:null}   -> clears the card
+  - This file sends:  {type:'rin-approval-answer', index}    -> the option the owner picked (0-based)
+                      {type:'rin-approval-height', height}   -> so the page can size the frame
+  Keys 1, 2, 3 pick an option when the card has focus.
+  The content is sample data. Real approvals depend on each company's departments and the tools (MCPs) it connects.
+  Opened on its own, this file shows a sample card.
+-->
+<style>
+:root{--surface:#fff;--surface-2:#f6f6f1;--ink:#242824;--muted:#646b64;--faint:#8b918a;--border:#dfe2da;--border-strong:#c9cdc3;--green:#204d39;--mint:#dcefe3;--amber:#c4841f;--amber-ink:#7a4c0a;--font:"DM Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;background:transparent;color:var(--ink);font:14px/1.45 var(--font);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+#card{padding:10px}
+#card:empty{padding:0}
+/* 20 Nov: amber glow, same colour as the waiting department on the map */
+.prompt{box-shadow:0 0 0 3px color-mix(in srgb,var(--amber) 16%,transparent),0 6px 22px color-mix(in srgb,var(--amber) 28%,transparent);border:1px solid color-mix(in srgb,var(--amber) 70%,var(--border));background:var(--surface);border-radius:14px;padding:12px 14px;animation:rise .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:0}to{opacity:1}}
+.ph{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--amber-ink);text-transform:uppercase;letter-spacing:.4px}
+.ph .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.pq{margin:6px 0;font-size:16px;font-weight:500;line-height:1.35}
+.pf{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 6px}
+.pf dt{display:inline;font-size:12px;color:var(--faint)}.pf dt::after{content:" "}
+.pf dd{display:inline;margin:0;font-size:12.5px}
+.pw{margin:0 0 10px;font-size:12.5px;color:var(--muted)}
+.opts{display:grid;gap:6px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:9px;padding:8px 10px;font-size:13.5px}
+.opt:hover,.opt:focus-visible{border-color:var(--green);background:color-mix(in srgb,var(--mint) 55%,var(--surface));outline:none}
+.opt.first{border-color:var(--green)}
+kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;min-width:20px;height:20px;display:inline-grid;place-items:center;border:1px solid var(--border-strong);border-bottom-width:2px;border-radius:5px;color:var(--muted);background:var(--surface-2)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="card"></div>
+<script>
+(function(){
+  var card=document.getElementById('card'), current=null, embedded=window.parent!==window;
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  /* the question may contain <b> for the amount; keep only <b>, everything else becomes plain text */
+  function rich(q){var doc=new DOMParser().parseFromString('<div>'+q+'</div>','text/html'),out='';
+    (function walk(n){n.childNodes.forEach(function(c){if(c.nodeType===3)out+=esc(c.textContent);else if(c.nodeName==='B'){out+='<b>';walk(c);out+='</b>'}else walk(c)})})(doc.body.firstChild);return out}
+  function send(m){if(embedded){try{parent.postMessage(m,'*')}catch(e){}}}
+  function height(){send({type:'rin-approval-height',height:Math.ceil(card.getBoundingClientRect().height)})}
+  function render(a){
+    current=a;
+    if(!a){card.innerHTML='';height();return}
+    card.innerHTML='<div class="prompt" role="dialog" aria-labelledby="pq">'+
+      '<div class="ph"><span class="dot"></span>'+esc(a.deptName)+' needs your OK</div>'+
+      '<p id="pq" class="pq">'+rich(a.q)+'</p>'+
+      '<dl class="pf">'+(a.facts||[]).map(function(f){return '<div><dt>'+esc(f[0])+'</dt><dd>'+esc(f[1])+'</dd></div>'}).join('')+'</dl>'+
+      (a.why?'<p class="pw">'+esc(a.why)+'</p>':'')+
+      '<div class="opts" role="group" aria-label="Your answer">'+a.opts.map(function(o,i){return '<button class="opt'+(i===0?' first':'')+'" data-i="'+i+'"><kbd>'+(i+1)+'</kbd>'+esc(o)+'</button>'}).join('')+'</div></div>';
+    height();
+  }
+  function pick(i){
+    if(!current)return;
+    if(embedded){send({type:'rin-approval-answer',index:i})}
+    else{render(null);card.innerHTML='<p class="pw">You picked: '+esc(current?current.opts[i]:'')+'</p>'}
+  }
+  card.addEventListener('click',function(e){var b=e.target.closest('[data-i]');if(b)pick(+b.dataset.i)});
+  document.addEventListener('keydown',function(e){var n=+e.key;if(current&&n>=1&&n<=current.opts.length){e.preventDefault();pick(n-1)}});
+  window.addEventListener('message',function(e){var d=e.data;if(d&&d.type==='rin-approval')render(d.approval)});
+  if(window.ResizeObserver)new ResizeObserver(height).observe(card);
+  if(!embedded){render({deptName:'Accounting',q:'Refund <b>₹1,200</b> to Priya Nair?',facts:[['To','Original UPI payment'],['Why','Cancelled before shipping']],why:'Above your ₹500 automatic refund limit.',opts:['Allow','Allow, and don’t ask again for refunds up to ₹1,500','Don’t allow']})}
+  else send({type:'rin-approval-ready'});
+})();
+</script>
+</body>
+</html>

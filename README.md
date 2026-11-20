@@ -1,22 +1,18 @@
 # RIN by OSRIN
 
-Clickable design mockup of RIN, using the MJ map with the cube-shaped land (17 Nov): log in, sign up (lead form), request sent, the owner dashboard with the Campus map and the profile menu, and the signed-out screen.
+Clickable design mockup of RIN: the owner dashboard (cube-shaped Campus map + rin chat), with log in, sign up, request sent and signed out as separate pages. Light theme only.
 
-This cut is light theme only and Campus map only. The theme switch, dark tones and map style switch are removed.
+Every screen is its own HTML file. Nothing is built or bundled, and there are no dependencies. Open any file in a browser.
 
 ## Files
 
-- `index.html`: log in, sign up, request sent, the Campus map dashboard with the profile menu, and signed out.
-- `departments/`: one page per department (`accounting.html`, `market.html`, `gatehouse.html`, `care.html`, `marketing.html`, `library.html`, `workshop.html`, `governance.html`, and `rin.html` for RIN itself). They all share `department.css`. Each page summarises what the department has (helpers, rules, connected apps) and what it did today.
+- `index.html`: the main dashboard. Map, rin chat, approvals, profile menu. Not embedded in or tied to the login pages.
+- `parts/approval.html`: the approval card in the rin chat. Embedded in the dashboard; talks to it with `postMessage` (the page sends the approval, the card sends back the option picked). Open it alone to see a sample card.
+- `parts/connections.html`: the connected apps (MCPs or tools) around the map. Each app is a dot with a line to each department that uses it. An app two departments share is one dot. Gatehouse and Governance have none. Edit `CONNECTIONS` at the top of the file.
+- `departments/*.html`: one page per department (plus `rin.html`), sharing `department.css`. Open them from the map ("Open <department> →"); "Back to map" returns to `index.html`.
+- `auth/login.html`, `auth/signup.html`, `auth/request-sent.html`, `auth/signed-out.html`: the account pages, each standalone. They link to each other and Log in links to `../index.html`.
+- `logo-animation/`: the logo animation files.
 
-On the map, click a department, then **Open <department> →** to go to its page. **Back to map** returns to the dashboard.
+The only link from the dashboard to the account pages is "Exit" in the profile menu, which opens `auth/signed-out.html`.
 
-## Run
-
-Open `index.html` in a browser. There is no build step and there are no dependencies. Keep the `departments/` folder next to `index.html`.
-
-All data is sample data. Nothing is sent, saved or paid. Screen names are placeholders until they are confirmed.
-
-## Logo animation
-
-`logo-animation/` holds the OSRIN/RIN logo animation files (new-animation). Open `rin-homecoming.html` in a browser to play the animation; `rin-homecoming-preview.mp4` is a video preview and `review-frames/` holds still review sheets.
+All data is sample data. Nothing is sent, saved or paid. Screen names are placeholders until confirmed.
