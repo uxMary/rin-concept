@@ -482,6 +482,11 @@ svg .ln.ext{display:none}
 .connframe{position:absolute;left:0;top:0;width:1000px;height:640px;border:0;pointer-events:none;z-index:2;background:transparent;color-scheme:light}
 .tower .rf2{stroke:rgba(20,28,24,.25)}
 
+/* 20 Nov (Joseph): no margins around the map; it fills its column edge to edge */
+html,body{margin:0}
+.mapcol{padding:0!important}
+.map{border:0!important;border-radius:0!important}
+.mock{display:none}
 /* 20 Nov (Joel): no white box behind the rin mark in the chat */
 .rinav,.rinav.sm{background:none!important;border:0!important;padding:0!important;border-radius:0!important}
 </style>
