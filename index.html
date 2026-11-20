@@ -690,7 +690,20 @@ const BLDG={finance:[44,40,58],accounting:[46,36,44],market:[52,40,34],marketing
 const badge=(x,y,id,r=15)=>`<g class="badge"><circle cx="${f1(x)}" cy="${f1(y)}" r="${r}"/><g transform="translate(${f1(x-r*.6)} ${f1(y-r*.6)}) scale(${f1(r*1.2/24)})" class="bi"><path d="${ICON_PATHS[id]}" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></g>`;
 
 /* 20 Nov (Joel): Gatehouse and Governance work inside RIN, so they are not boxes. Gatehouse = an open gate, Governance = a round tower. */
-function gateArch(x,y){const A=LM(x,y);A.lot(60,24);A.box(-30,-18,-9,9,0,32);A.box(18,30,-9,9,0,32);A.box(-30,30,-9,9,32,40);return `<g class="box gate">${A.out.join('')}</g>`}
+/* 20 Nov (Joseph): the gate has a rounded arch instead of a flat lintel. */
+function gateArch(x,y){const A=LM(x,y),P=A.P;A.lot(60,24);
+  const R=17,ZS=18,T=42,N=14,pts=a=>a.map(p=>f1(p[0])+','+f1(p[1])).join(' '),q=(a,c)=>A.out.push(`<polygon class="${c}" points="${pts(a)}"/>`);
+  const arc=v=>{const a=[];for(let i=0;i<=N;i++){const t=Math.PI*i/N;a.push(P(R*Math.cos(t),v,ZS+R*Math.sin(t)))}return a};
+  const face=v=>[P(-30,v,0),P(-30,v,T),P(30,v,T),P(30,v,0),P(R,v,0),...arc(v),P(-R,v,0)];
+  const b=arc(-9),f=arc(9);
+  q(face(-9),'wl');                                            /* back of the gate, seen through the arch */
+  q([P(R,-9,0),P(R,9,0),f[0],b[0]],'wr');                      /* inner sides and underside of the arch */
+  for(let i=0;i<N;i++)q([b[i],f[i],f[i+1],b[i+1]],'rf2');
+  q([P(-R,-9,0),P(-R,9,0),f[N],b[N]],'wr');
+  q(face(9),'wl');                                             /* front with the arched opening */
+  q([P(30,-9,0),P(30,9,0),P(30,9,T),P(30,-9,T)],'wr');
+  q([P(-30,-9,T),P(30,-9,T),P(30,9,T),P(-30,9,T)],'rf');
+  return `<g class="box gate">${A.out.join('')}</g>`}
 /* ---------- Landmarks: one colour, but each department has its own architecture ---------- */
 function LM(x,y){
   const P=(u,v,z)=>[x+(u-v)*C30,y+(u+v)*S30-z];
