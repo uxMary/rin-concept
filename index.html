@@ -602,7 +602,17 @@ const FIRST_PROMPTS=[
    opts:[['Allow','You allowed the ₹1,200 refund to Priya Nair'],['Allow, and don’t ask again for refunds up to ₹1,500','You allowed it and raised the automatic refund limit to ₹1,500',()=>{S.refundLimit=1500}],['Don’t allow','You stopped the refund to Priya Nair']]},
   {dept:'accounting',q:'Pay Kalpa Ceramics <b>₹18,400</b>?',facts:[['Bill','KC-2291 · matches delivery'],['From','HDFC current account']],why:'Supplier payments over ₹10,000 need your OK.',done:'Kalpa Ceramics paid',
    opts:[['Allow','You allowed paying Kalpa Ceramics ₹18,400'],['Don’t allow','You held the payment to Kalpa Ceramics']]}
-];
+,
+  {dept:'marketing',q:'Publish the Diwali post to Instagram?',facts:[['Where','Instagram · Mug Studio page'],['When','Today, 7 PM']],why:'Anything that goes public needs your OK.',done:'Diwali post scheduled for 7 PM',
+   opts:[['Allow','You allowed the Diwali post on Instagram'],['Allow, and don’t ask again for posts that follow the brand guide','You allowed it. Posts that follow the brand guide now go out on their own'],['Don’t allow','You held the Diwali post']]},
+  {dept:'care',q:'Message <b>214 customers</b> about delayed orders?',facts:[['Channel','WhatsApp'],['Orders','Shipped late by Shiprocket']],why:'Messages to many customers at once need your OK.',done:'Delay update sent to 214 customers',
+   opts:[['Allow','You allowed the delay message to 214 customers'],['Don’t allow','You held the delay message']]},
+  {dept:'market',q:'Order 120 mugs from Kalpa Ceramics for <b>₹46,800</b>?',facts:[['Why','Stock runs out in 6 days'],['Delivery','In 9 days']],why:'Buying from a supplier over ₹10,000 needs your OK.',done:'Order placed with Kalpa Ceramics',
+   opts:[['Allow','You allowed the ₹46,800 order from Kalpa Ceramics'],['Don’t allow','You held the Kalpa Ceramics order']]},
+  {dept:'marketing',q:'Raise Meta Ads spend to <b>₹3,000 a day</b> for Diwali week?',facts:[['Now','₹1,500 a day'],['For','7 days']],why:'Ad spend over ₹2,000 a day needs your OK.',done:'Diwali ad budget raised',
+   opts:[['Allow','You raised ad spend to ₹3,000 a day for 7 days'],['Don’t allow','You kept ad spend at ₹1,500 a day']]},
+  {dept:'library',q:'Delete <b>38 customer records</b> older than 3 years?',facts:[['Kept','Invoices, for GST'],['Removed','Names, phones, addresses']],why:'Deleting data needs your OK.',done:'38 old records deleted',
+   opts:[['Allow','You allowed deleting 38 old customer records'],['Don’t allow','You kept the 38 old records']]}];
 /* Rules each department follows (sample) */
 const RULES={
   finance:()=>[`Refunds up to ₹${S.refundLimit.toLocaleString('en-IN')} go out on their own`,'Supplier payments over ₹10,000 need your OK','Payments go out from your HDFC current account'],
@@ -854,7 +864,7 @@ function answer(i){
   S.chat.push({from:'log',html:`${i===a.opts.length-1?'✕':'✓'} ${esc(o[1])}`,t:now()});renderChat();
   if(o[2])o[2]();S.history.unshift({dept:a.dept,text:(i===a.opts.length-1?'✕ ':'✓ ')+o[1],t:now()});if(S.open)renderDetail();
   setTimeout(()=>{renderChat();renderMap();if(i<a.opts.length-1)bubble(a.dept,a.done);
-    if(S.queue.length)queuePrompt(S.queue.shift(),6000)},500);
+    if(S.queue.length)queuePrompt(S.queue.shift(),3500);else if(!S.roundDone){S.roundDone=true;rinSays('That’s everything that needed you today. I’ll keep the rest running.',1200)}},500);
 }
 function renderAll(){renderChat();renderPrompt();renderMap();apply()}
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,3200)}
@@ -928,7 +938,7 @@ function runFlow(){const f=document.getElementById('flow');if(!f)return;const st
 
 S.chat.push({from:'rin',html:'Good evening, Anita. Everything is running. 9 helpers handled 312 tasks today, and <b>₹1.8L</b> came in.',t:'6:30 pm'});
 renderAll();fitMap();
-queuePrompt(FIRST_PROMPTS[0],3500);S.queue.push(FIRST_PROMPTS[1]);
+queuePrompt(FIRST_PROMPTS[0],3500);[2,3,1,4,5,6].forEach(i=>S.queue.push(FIRST_PROMPTS[i]));
 </script>
 <script>
 (function(){
